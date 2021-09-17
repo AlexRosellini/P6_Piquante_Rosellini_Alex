@@ -16,10 +16,10 @@ exports.signup = (req, res, next) => {
       password: hash //et le password qui est maintenant hash
     });
     user.save() //on sauvegarde notre user sur la database.
-    .then(() => res.status(200).json( {message: "Nouveau compte utilisateur créé !"})) 
-    .catch(error => res.status(400).json({ message : Object.keys(error.errors).map(key => error.errors[key].message).join('\n') }))
+    .then(() => res.status(200).json( {message: "Nouveau compte utilisateur créé !"})) //On renvoie une réponse positive 200
+    .catch(error => res.status(400).json({ message : Object.keys(error.errors).map(key => error.errors[key].message).join('\n') })) //Sinon un message d'érreur (si même email)
   })
-  .catch(error => res.status(500).json({ message : 'Something went wrong ...' })) 
+  .catch(error => res.status(500).json({ message : 'Something went wrong ...' }))  //Sinon un message d'érreur (si serveur)
 }
 
 /*********************************************************************************/
@@ -45,9 +45,9 @@ exports.login = (req, res, next) => {
               )
           })
         })
-      .catch(error => res.status(500).json({ error }));
+      .catch(error => res.status(500).json({ error })); //Sinon un message d'érreur
     })
-  .catch(error => res.status(500).json({ error }));
+  .catch(error => res.status(500).json({ error })); //Sinon un message d'érreur
 }
 /*********************************************************************************/
 

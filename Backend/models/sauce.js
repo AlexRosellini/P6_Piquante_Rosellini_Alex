@@ -1,7 +1,14 @@
+/*********************************************************************************/
+//On importe ce dont nous avons besoin.
+
 const mongoose = require('mongoose')
 
+/*********************************************************************************/
+//Notre Schéma Sauce
+
+
 const sauceSchema = mongoose.Schema({
-    userId: { type: String, required: true },
+    userId: { type: String, required: true }, //Required True: On en a besoin
     name: { type: String, required: true },
     manufacturer: { type: String, required: true },
     description: { type: String, required: true },

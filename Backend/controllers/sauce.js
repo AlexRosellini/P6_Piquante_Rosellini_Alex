@@ -28,11 +28,53 @@ exports.createSauce = (req, res, next) => { //Pour créer une sauce.
     delete sauceObject._id //on enlêve l'ID.
     const sauce = new Sauce({ //On créer un nouvelle objet Sauce
         ...sauceObject, 
-        imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}` //On gêre l'URL de notre image
+        imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`, //On gêre l'URL de notre image
+        likes: 0, //On met sur une valeur de base nos tableaux et nos likes/dislikes
+        dislikes: 0,
+        usersLiked: [' '],
+        usersdisLiked: [' '],
     }); 
     sauce.save() //On sauvegarde cette sauce sur la database avec save.
         .then(() => res.status(200).json({message: 'Sauce sauvegardée'})) //On envoie une réponse positive 200.
         .catch(error => res.status(400).json({ error })) //Sinon, un message d'érreur.
+}
+
+exports.likesDislikes = (req, res, next) => {  //Pour gêrer les likes et les dislikes.
+    if (req.body.like === 1) { //Comme indiquer sur les instructions, une valeur de "1" équivaux a un like.
+        Sauce.updateOne( //On utilise 'UpdateOne()' pour mettre à jour les likes notre sauce.
+            {_id: req.params.id}, //La sauce qu'on update est définie par son ID
+            {  $inc: { likes: +1}, //On utilise $inc de MangoDB pour incrémenter nos likes par 1
+            $push: { usersLiked: req.body.userId} })  //On utilise $push de MangoDB pour push notre utilisateur dans le tableau.
+            .then((sauce) => res.status(200).json({ message: 'Yummy :)'})) //On renvoie une réponse positive 200
+            .catch(error => res.status(400).json({ error })) //Sinon, un message d'érreur
+    } 
+    else if (req.body.like === -1) { //Comme indiquer sur les instructions, une valeur de "-1" equivaux à un dislike.
+        Sauce.updateOne(  //On utilise 'UpdateOne()' pour mettre à jour les likes notre sauce.
+            {_id: req.params.id}, //La sauce qu'on update est définie par son ID
+            {$inc: { dislikes: +1}, //On utilise $inc de MangoDB pour incrémenter nos dislikes par 1
+            $push: { usersDisliked: req.body.userId }})  //On utilise $push de MangoDB pour push notre utilisateur dans le tableau.
+            .then(() => res.status(200).json({ message: 'Not yummy :('})) //On renvoie une réponse positive 200
+            .catch(error => res.status(400).json({ error })) //Sinon, un message d'érreur
+    }  
+    else { //Sinon, la valeur est de 0; comme indiquer sur les instructions, cela équivaux à une annulation d'un like/dislike.
+        Sauce.findOne({ _id: req.params.id }) //En ce cas on commence par trouver notre sauce via son ID.
+        .then(sauce => { 
+            if (sauce.usersLiked.includes(req.body.userId)) {  //Si l'utilisateur est présent dans le tableau des likes
+                Sauce.updateOne({ _id: req.params.id }, //On update la dite sauce.
+                    { $pull: { usersLiked: req.body.userId }, //On enlève pour commencer l'utilisateur du tableau likes
+                    $inc: { likes: -1},}) //et on enlève un like.
+                .then(() => res.status(200).json({ message: 'like removed'})) //On renvoie une réponse positive 200
+                .catch(error => res.status(400).json({ error })) //Sinon, un message d'érreur.
+
+            } else if (sauce.usersDisliked.includes(req.body.userId)) { //Sinon, si l'utilisateur est présent dans le tableu dislikes.
+                Sauce.updateOne( {_id: req.params.id}, //On update la dite sauce
+                    {$pull: {usersDisliked: req.body.userId}, //On enlève pour commencer l'utilisateur du tableau dislikes
+                    $inc: { dislikes:  -1},}) //et on enlève un dislike
+                .then(() => res.status(200).json({ message: 'Dislike removed'})) //On renvoie une réponse positive 200
+                .catch(error => res.status(400).json({ error })) //Sinon un message d'érreur.
+            }
+        })
+    }
 }
 
 /*********************************************************************************/

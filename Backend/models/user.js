@@ -15,7 +15,7 @@ const userSchema = mongoose.Schema({
 /*********************************************************************************/
 //UniqueValidator vérifie les données et renvoie des érreur comprehensives.
 
-userSchema.plugin(uniqueValidator, { message: 'Error,  {PATH} already in use.' })
+userSchema.plugin(uniqueValidator, { message: 'Error,  {PATH} already in use.' }) //On configure notre plugin avec un message d'érreur personalisé.
 
 /*********************************************************************************/
 //On exporte notre module
