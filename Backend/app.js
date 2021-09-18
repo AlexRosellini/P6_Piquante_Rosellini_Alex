@@ -3,6 +3,7 @@
 
 require('dotenv').config();
 const express = require('express');
+const helmet = require('helmet')
 const cors = require('cors')
 const mongoose = require('mongoose');
 const userRoutes = require('./routes/user');
@@ -35,6 +36,8 @@ app.use(express.json());
 app.use(express.urlencoded({
   extended: true
 }));
+
+app.use(helmet());
 
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
