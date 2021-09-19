@@ -7,6 +7,7 @@ const helmet = require('helmet');
 const xss = require('xss-clean');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const rateLimit = require("express-rate-limit");
 const morgan = require('morgan');
 const userRoutes = require('./routes/user');
 const sauceRoutes = require('./routes/sauce');
@@ -42,10 +43,14 @@ app.use(express.urlencoded({
 app.use(helmet());
 app.use(xss());
 app.use(morgan('combined'))
-
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100 // limit each IP to 100 requests per windowMs
+});
 
+app.use(limiter);
 app.use('/api/sauces', sauceRoutes)
 app.use('/api/auth', userRoutes);
 
