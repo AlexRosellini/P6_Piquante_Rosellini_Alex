@@ -3,9 +3,11 @@
 
 require('dotenv').config();
 const express = require('express');
-const helmet = require('helmet')
-const cors = require('cors')
+const helmet = require('helmet');
+const xss = require('xss-clean');
+const cors = require('cors');
 const mongoose = require('mongoose');
+const morgan = require('morgan');
 const userRoutes = require('./routes/user');
 const sauceRoutes = require('./routes/sauce');
 const path = require('path');
@@ -38,6 +40,8 @@ app.use(express.urlencoded({
 }));
 
 app.use(helmet());
+app.use(xss());
+app.use(morgan('combined'))
 
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
