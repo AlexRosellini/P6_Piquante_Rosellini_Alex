@@ -4,11 +4,12 @@
 const express = require('express')
 const router = express.Router()
 const userCtrl = require('../controllers/user')
+const ValPassword = require('../middleware/validatorPassword');
 
 /*********************************************************************************/
 //On créer nos routes post.
 
-router.post('/signup', userCtrl.signup)
+router.post('/signup', ValPassword, userCtrl.signup)
 router.post('/login',  userCtrl.login)
 
 /*********************************************************************************/

@@ -5,8 +5,12 @@ const bcrypt = require('bcrypt'); //Bcrypt sert à Hash (et donc sécuriser) les
 const jwt = require('jsonwebtoken'); //jsonwebtoken genère un token (pour que nos users ne se connectent qu'une fois)
 const User = require('../models/user'); //on importe le schéma pour nos utilisateurs.
 
+
+
 /*********************************************************************************/
 //notre middleware signup, pour créer un compte
+
+
 
 exports.signup = (req, res, next) => { 
   bcrypt.hash(req.body.password, 10) //on hash le password avec un salt de 10, le salt ajout du texte aléatoire au hash.
@@ -40,7 +44,7 @@ exports.login = (req, res, next) => {
             userId: user._id,
             token: jwt.sign( //on génère notre token via .sign de JsonWebToken
               {userId: user._id }, //le token est créer via le User._id.
-              'RANDOM_TOKEN_SECRET', 
+              process.env.Token, 
               {expiresIn: '24h'} //le dit token expire après 24h.
               )
           })
