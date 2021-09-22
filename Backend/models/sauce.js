@@ -15,10 +15,14 @@ const sauceSchema = mongoose.Schema({
     mainPepper: { type: String, required: true },
     imageUrl: { type: String, required: true },
     heat: { type: Number, required: true },
-    likes: { type: Number, default: 0 },
+    likes: { type: Number, default: 0 }, //Valeur de défaut like et dislike: 0.
     dislikes: { type: Number, default: 0 },
-    usersLiked: { type: [String] },
+    usersLiked: { type: [String] }, //On créer un tableau pour nos utilisateurs, vide par défaut.
     usersDisliked: { type: [String] },
 })
+
+
+/*********************************************************************************/
+//On exporte notre module.
 
 module.exports = mongoose.model('Sauce', sauceSchema)
